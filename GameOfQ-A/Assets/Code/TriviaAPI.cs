@@ -22,8 +22,18 @@ public class TriviaAPI : MonoBehaviour
             else
             {
                 string responseText = webRequest.downloadHandler.text;
-                //proces
+                ProcessTriviaResponse(responseText);
             }
+        }
+    }
+
+    public  void ProcessTriviaResponse(string json)
+    {
+        TriviaResponse triviaResponse = JsonUtility.FromJson<TriviaResponse>("{\"results\":" + json + "}");
+
+        foreach (TriviaQuestion question in triviaResponse.results)
+        {
+            Debug.Log(question.question);
         }
     }
 }
