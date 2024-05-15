@@ -2,12 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Net;
 
 
 public class TriviaAPI : MonoBehaviour
 {
     // The API URL from the Open Trivia Database
-    private string apiURL = "https://opentdb.com/api.php?amount=50&category=9&difficulty=medium&type=multiple";
+    private string apiURL = "https://opentdb.com/api.php?amount=50&category=17&type=multiple";
+
+    public QuestionDisplay questionDisplay;
+
+    private void Start()
+    {
+        StartCoroutine(GetTriviaQuestions());
+    }
 
     private IEnumerator GetTriviaQuestions()
     {
@@ -22,6 +30,7 @@ public class TriviaAPI : MonoBehaviour
             else
             {
                 string responseText = webRequest.downloadHandler.text;
+                Debug.Log("Received JSON: " + responseText);  // Add this line
                 ProcessTriviaResponse(responseText);
             }
         }
@@ -29,11 +38,36 @@ public class TriviaAPI : MonoBehaviour
 
     public  void ProcessTriviaResponse(string json)
     {
-        TriviaResponse triviaResponse = JsonUtility.FromJson<TriviaResponse>("{\"results\":" + json + "}");
+        //TriviaResponse triviaResponse = JsonUtility.FromJson<TriviaResponse>("{\"results\":" + json + "}");
+        TriviaResponse triviaResponse = JsonUtility.FromJson<TriviaResponse>(json);
+
+        if (triviaResponse == null || triviaResponse.results == null)
+        {
+            Debug.LogError("Deserialized TriviaResponse is null.");
+            return;
+        }
 
         foreach (TriviaQuestion question in triviaResponse.results)
         {
-            Debug.Log(question.question);
+            string decodedQuestion = WebUtility.HtmlDecode(question.question);
+            string decodedCorrectAnswer = WebUtility.HtmlDecode(question.correct_answer);
+            List<string> decodedIncorrectAnswers = new List<string>();
+            foreach (string answer in question.incorrect_answers)
+            {
+                decodedIncorrectAnswers.Add(WebUtility.HtmlDecode(answer));
+            }
+
+            Debug.Log(decodedQuestion + " - Answers: " + decodedCorrectAnswer);
+            foreach (string answer in decodedIncorrectAnswers)
+            {
+                Debug.Log("Incorrect Answer : " + answer);
+            }
+            Debug.Log("triviaResponse.results.Length = " + triviaResponse.results.Length);
+            if (triviaResponse.results.Length > 0)
+            {
+                questionDisplay.SetQuestions(new List<TriviaQuestion>(triviaResponse.results));
+                questionDisplay.DisplayQuestion(triviaResponse.results[0]);
+            }
         }
     }
 }
