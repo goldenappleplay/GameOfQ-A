@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class AnswersManager : MonoBehaviour
 {
     [SerializeField] private Button[] answerButtons;
     [SerializeField] private TextMeshProUGUI[] answerTexts;
 
-
     private TriviaQuestion currentQuestion;
+    [SerializeField] private QuestionDisplay questionDisplay;
 
     public void DisplayAnswers(TriviaQuestion question)
     {
@@ -21,14 +22,21 @@ public class AnswersManager : MonoBehaviour
         allAnswers.Add(question.correct_answer);
         allAnswers = ShuffleList(allAnswers);
 
+        //question.incorrect_answers.ToList().ForEach(answer => Debug.Log("iskam da vidq otgovorite: " + answer));
+
         for (int i = 0; i < answerButtons.Length; i++)
         {
             if (i < allAnswers.Count)
             {
+                int index = i;  // Capture the current value of i
                 answerButtons[i].gameObject.SetActive(true);
                 answerTexts[i].text = allAnswers[i];
                 answerButtons[i].onClick.RemoveAllListeners();
-                answerButtons[i].onClick.AddListener(() => OnAnswerSelected(allAnswers[i]));
+                answerButtons[i].onClick.AddListener(() => OnAnswerSelected(allAnswers[index]));
+            }
+            else
+            {
+                answerButtons[i].gameObject.SetActive(false);
             }
         }
     }
@@ -38,11 +46,14 @@ public class AnswersManager : MonoBehaviour
         if (selectedAnswer == currentQuestion.correct_answer)
         {
             Debug.Log("Correct Answer!");
+            questionDisplay.AddScore(100);
+            questionDisplay.NextQuestion();
             //Proceed to the next question or any other logic
         }
         else
         {
             Debug.Log("Wrong Answer!");
+            questionDisplay.RestartGame();
             // Handle wrong answer, maybe restart the game or reduce lives
         }
     }

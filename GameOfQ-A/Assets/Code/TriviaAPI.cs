@@ -52,22 +52,21 @@ public class TriviaAPI : MonoBehaviour
             string decodedQuestion = WebUtility.HtmlDecode(question.question);
             string decodedCorrectAnswer = WebUtility.HtmlDecode(question.correct_answer);
             List<string> decodedIncorrectAnswers = new List<string>();
-            foreach (string answer in question.incorrect_answers)
+            //foreach (string answer in question.incorrect_answers)
+            //{
+            //    decodedIncorrectAnswers.Add(WebUtility.HtmlDecode(answer));
+            //}
+            for (int i = 0; i < question.incorrect_answers.Length; i++)
             {
-                decodedIncorrectAnswers.Add(WebUtility.HtmlDecode(answer));
+                question.incorrect_answers[i] = WebUtility.HtmlDecode(question.incorrect_answers[i]);
             }
 
-            Debug.Log(decodedQuestion + " - Answers: " + decodedCorrectAnswer);
-            foreach (string answer in decodedIncorrectAnswers)
-            {
-                Debug.Log("Incorrect Answer : " + answer);
-            }
-            Debug.Log("triviaResponse.results.Length = " + triviaResponse.results.Length);
-            if (triviaResponse.results.Length > 0)
-            {
-                questionDisplay.SetQuestions(new List<TriviaQuestion>(triviaResponse.results));
-                questionDisplay.DisplayQuestion(triviaResponse.results[0]);
-            }
+        }
+
+        if (triviaResponse.results.Length > 0)
+        {
+            questionDisplay.SetQuestions(new List<TriviaQuestion>(triviaResponse.results));
+            //questionDisplay.DisplayQuestion(triviaResponse.results[0]);
         }
     }
 }
