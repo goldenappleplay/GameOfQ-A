@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System.Net;
 
 public class AnswersManager : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class AnswersManager : MonoBehaviour
             {
                 int index = i;  // Capture the current value of i
                 answerButtons[i].gameObject.SetActive(true);
-                answerTexts[i].text = allAnswers[i];
+                answerTexts[i].text = WebUtility.HtmlDecode(allAnswers[i]);
                 answerButtons[i].onClick.RemoveAllListeners();
                 answerButtons[i].onClick.AddListener(() => OnAnswerSelected(allAnswers[index]));
             }
@@ -46,8 +47,10 @@ public class AnswersManager : MonoBehaviour
         if (selectedAnswer == currentQuestion.correct_answer)
         {
             Debug.Log("Correct Answer!");
-            questionDisplay.AddScore(100);
-            questionDisplay.NextQuestion();
+            bool isCorrect = selectedAnswer == currentQuestion.correct_answer;
+            questionDisplay.PlayerAnswered(questionDisplay.currentPlayer, isCorrect);
+            //questionDisplay.AddScore(100);
+            //questionDisplay.NextQuestion();
             //Proceed to the next question or any other logic
         }
         else

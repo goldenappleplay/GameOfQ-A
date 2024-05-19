@@ -49,16 +49,25 @@ public class TriviaAPI : MonoBehaviour
 
         foreach (TriviaQuestion question in triviaResponse.results)
         {
-            string decodedQuestion = WebUtility.HtmlDecode(question.question);
-            string decodedCorrectAnswer = WebUtility.HtmlDecode(question.correct_answer);
-            List<string> decodedIncorrectAnswers = new List<string>();
+            //string decodedQuestion = WebUtility.HtmlDecode(question.question);
+            //string decodedCorrectAnswer = WebUtility.HtmlDecode(question.correct_answer);
+            //List<string> decodedIncorrectAnswers = new List<string>();
             //foreach (string answer in question.incorrect_answers)
             //{
             //    decodedIncorrectAnswers.Add(WebUtility.HtmlDecode(answer));
             //}
+            question.question = WebUtility.HtmlDecode(question.question);
+            question.correct_answer = WebUtility.HtmlDecode(question.correct_answer);
             for (int i = 0; i < question.incorrect_answers.Length; i++)
             {
                 question.incorrect_answers[i] = WebUtility.HtmlDecode(question.incorrect_answers[i]);
+            }
+            Debug.Log("Decoded Question: " + question.question);
+            Debug.Log("Decoded Correct Answer: " + question.correct_answer);
+            for (int i = 0; i < question.incorrect_answers.Length; i++)
+            {
+                Debug.Log("Decoded Incorrect Answer " + i + ": " + question.incorrect_answers[i]);
+
             }
 
         }
