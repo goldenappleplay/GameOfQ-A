@@ -15,6 +15,9 @@ public class AnswersManager : MonoBehaviour
     private TriviaQuestion currentQuestion;
     [SerializeField] private QuestionDisplay questionDisplay;
 
+    private bool player1Answered;
+    private bool player2Answered;
+
     public void DisplayAnswers(TriviaQuestion question)
     {
         currentQuestion = question;
@@ -33,7 +36,11 @@ public class AnswersManager : MonoBehaviour
                 answerButtons[i].gameObject.SetActive(true);
                 answerTexts[i].text = WebUtility.HtmlDecode(allAnswers[i]);
                 answerButtons[i].onClick.RemoveAllListeners();
-                answerButtons[i].onClick.AddListener(() => OnAnswerSelected(allAnswers[index]));
+                // Add listener for Player 1
+                answerButtons[i].onClick.AddListener(() => OnAnswerSelected(questionDisplay.player1, allAnswers[index]));
+                // Add listener for Player 2 (assume separate button or input)
+                answerButtons[i].onClick.AddListener(() => OnAnswerSelected(questionDisplay.player2, allAnswers[index]));
+
             }
             else
             {
@@ -42,13 +49,13 @@ public class AnswersManager : MonoBehaviour
         }
     }
 
-    private void OnAnswerSelected(string selectedAnswer)
+    private void OnAnswerSelected(Player player, string selectedAnswer)
     {
         if (selectedAnswer == currentQuestion.correct_answer)
         {
             Debug.Log("Correct Answer!");
             bool isCorrect = selectedAnswer == currentQuestion.correct_answer;
-            questionDisplay.PlayerAnswered(questionDisplay.currentPlayer, isCorrect);
+            questionDisplay.PlayerAnswered(player, selectedAnswer, isCorrect);
             //questionDisplay.AddScore(100);
             //questionDisplay.NextQuestion();
             //Proceed to the next question or any other logic

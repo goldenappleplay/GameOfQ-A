@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public int Score { get; private set; }
     public bool HasAnswered { get; private set; }
     public bool IsCorrect { get; private set; }
+    public string SelectedAnswer { get; private set; }
 
     public Player(string name)
     {
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour
         this.Score = 0;
         this.HasAnswered = false;
         this.IsCorrect = false;
+        SelectedAnswer = string.Empty;
     }
 
     public void AddScore(int points)
@@ -26,15 +28,17 @@ public class Player : MonoBehaviour
         this.Score = 0;
     }
 
-    public void SetAnswer(bool isCorrect)
+    public void SetAnswer(bool isCorrect, string selectedAnswer)
     {
         this.HasAnswered = true;
         this.IsCorrect = isCorrect;
+        this.SelectedAnswer = selectedAnswer;
     }
 
     public void ResetAnswer()
     {
         this.HasAnswered = false;
         this.IsCorrect = false;
+        this.SelectedAnswer = string.Empty;
     }
 }
